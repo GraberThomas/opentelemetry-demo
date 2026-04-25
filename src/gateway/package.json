@@ -1,0 +1,23 @@
+{
+  "name": "gateway",
+  "description": "Federated GraphQL gateway for the OpenTelemetry Astronomy Shop",
+  "repository": "https://github.com/opentelemetry/opentelemetry-demo",
+  "type": "module",
+  "author": "Thomas Graber",
+  "license": "ISC",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@apollo/gateway": "^2.13.3",
+    "@apollo/server": "^5.5.0",
+    "graphql": "^16.13.2"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}

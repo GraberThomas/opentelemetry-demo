@@ -687,6 +687,36 @@ services:
       currency:
         condition: service_started
     logging: *logging
+  
+  # ******************
+  # GraphQL Gateway
+  # ******************
+  graphql-gateway:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-gateway
+    container_name: graphql-gateway
+    build:
+      context: ./
+      dockerfile: ${GRAPHQL_GATEWAY_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-gateway
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${GRAPHQL_GATEWAY_PORT}"
+    environment:
+      - GRAPHQL_GATEWAY_PORT
+      - CURRENCY_DGS_ADDR
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=gateway
+      - GRAPHQL_ENABLE_UI
+      - GRAPHQL_ENABLE_INTROSPECTION
+    depends_on:
+      currency-dgs:
+        condition: service_started
+    logging: *logging
 
   # ******************
   # Dependent Services
