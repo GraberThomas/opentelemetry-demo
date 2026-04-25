@@ -43,6 +43,21 @@ gen_proto_ts() {
     /build/pb/demo.proto'
 }
 
+copy_frontend_proto_to_dgs() {
+  service_name=$1
+
+  echo "Copying frontend Typescript protobuf files to $service_name"
+
+  docker run --rm \
+    -e SERVICE="$service_name" \
+    -v "$(pwd):/build" \
+    alpine:3.20 \
+    /bin/sh -c '
+      mkdir -p /build/src/$SERVICE/protos && \
+      cp /build/src/frontend/protos/demo.ts /build/src/$SERVICE/protos/demo.ts
+    '
+}
+
 if [ -z "$1" ]; then
   #gen_proto_dotnet accounting
   #gen_proto_java ad
@@ -51,6 +66,7 @@ if [ -z "$1" ]; then
   gen_proto_cpp currency
   #gen_proto_ruby email
   gen_proto_ts frontend
+  copy_frontend_proto_to_dgs currency-dgs
   #gen_proto_js payment
   gen_proto_go product-catalog
   #gen_proto_php quote

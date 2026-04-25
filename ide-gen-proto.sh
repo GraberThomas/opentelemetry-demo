@@ -65,6 +65,14 @@ gen_proto_ts() {
   cd "$base_dir" || return
 }
 
+copy_frontend_proto_to_dgs() {
+  service_name=$1
+  echo "Copying frontend Typescript protobuf files to $service_name"
+  mkdir -p "$base_dir"/src/"$service_name"/protos
+  cp "$base_dir"/src/frontend/protos/demo.ts \
+     "$base_dir"/src/"$service_name"/protos/demo.ts
+}
+
 gen_proto_dotnet accounting
 # gen_proto_java ad
 gen_proto_dotnet cart
@@ -79,3 +87,5 @@ gen_proto_go product-reviews
 # gen_proto_php quote
 gen_proto_python recommendation
 gen_proto_rust shipping
+
+copy_frontend_proto_to_dgs currency-dgs
