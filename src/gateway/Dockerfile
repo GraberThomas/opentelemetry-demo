@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 FROM node:22-alpine AS build
 
 WORKDIR /usr/src/app
