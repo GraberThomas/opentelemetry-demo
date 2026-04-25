@@ -659,6 +659,35 @@ services:
     logging: *logging
 
   # ******************
+  # DGS Services
+  # ******************
+  # Currency DGS
+  currency-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-currency-dgs
+    container_name: currency-dgs
+    build:
+      context: ./
+      dockerfile: ${CURRENCY_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-currency-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${CURRENCY_DGS_PORT}"
+    environment:
+      - PORT=${CURRENCY_DGS_PORT}
+      - CURRENCY_ADDR=${CURRENCY_ADDR}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=currency-dgs
+    depends_on:
+      currency:
+        condition: service_started
+    logging: *logging
+
+  # ******************
   # Dependent Services
   # ******************
   # Flagd, feature flagging service
