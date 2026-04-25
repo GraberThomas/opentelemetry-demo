@@ -8,7 +8,7 @@ import { createYoga } from "graphql-yoga";
 import { schema } from "./schema.js";
 import { getRequiredEnv } from "./util.js";
 
-const port = Number(getRequiredEnv("PORT"));
+const port = Number(getRequiredEnv("CURRENCY_DGS_PORT"));
 
 const yoga = createYoga({
   schema,

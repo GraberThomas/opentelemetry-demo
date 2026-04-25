@@ -678,8 +678,8 @@ services:
     ports:
       - "${CURRENCY_DGS_PORT}"
     environment:
-      - PORT=${CURRENCY_DGS_PORT}
-      - CURRENCY_ADDR=${CURRENCY_ADDR}
+      - CURRENCY_DGS_PORT
+      - CURRENCY_ADDR
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=currency-dgs
     depends_on:
