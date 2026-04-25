@@ -9,10 +9,12 @@ import { schema } from "./schema.js";
 import { getRequiredEnv } from "./util.js";
 
 const port = Number(getRequiredEnv("CURRENCY_DGS_PORT"));
+const enableUi = process.env.GRAPHQL_ENABLE_UI === "true";
 
 const yoga = createYoga({
   schema,
   graphqlEndpoint: "/graphql",
+  graphiql: enableUi,
 });
 
 const server = createServer(yoga);

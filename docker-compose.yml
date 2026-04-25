@@ -682,6 +682,7 @@ services:
       - CURRENCY_ADDR
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=currency-dgs
+      - GRAPHQL_ENABLE_UI
     depends_on:
       currency:
         condition: service_started
