@@ -688,6 +688,33 @@ services:
         condition: service_started
     logging: *logging
   
+  # Cart DGS
+  cart-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-cart-dgs
+    container_name: cart-dgs
+    build:
+      context: ./
+      dockerfile: ${CART_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-cart-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${CART_DGS_PORT}"
+    environment:
+      - CART_DGS_PORT
+      - CART_ADDR
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=cart-dgs
+      - GRAPHQL_ENABLE_UI
+    depends_on:
+      cart:
+        condition: service_started
+    logging: *logging
+  
   # ******************
   # GraphQL Gateway
   # ******************
