@@ -68,6 +68,7 @@ if [ -z "$1" ]; then
   gen_proto_ts frontend
   copy_frontend_proto_to_dgs currency-dgs
   copy_frontend_proto_to_dgs cart-dgs
+  copy_frontend_proto_to_dgs ad-dgs
   #gen_proto_js payment
   gen_proto_go product-catalog
   #gen_proto_php quote
