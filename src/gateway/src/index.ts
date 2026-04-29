@@ -12,6 +12,7 @@ import { getRequiredEnv, getRequiredNumberEnv } from "./util.js";
 const port = getRequiredNumberEnv("GRAPHQL_GATEWAY_PORT");
 
 const currencyDgsUrl = getRequiredEnv("CURRENCY_DGS_ADDR");
+const cartDgsUrl = getRequiredEnv("CART_DGS_ADDR");
 
 const enableUi = process.env.GRAPHQL_ENABLE_UI === "true";
 const enableIntrospection =
@@ -29,6 +30,10 @@ async function main() {
           name: "currency",
           url: currencyDgsUrl,
         },
+        {
+          name: "cart",
+          url: cartDgsUrl
+        }
       ],
     }),
   });
@@ -48,7 +53,6 @@ async function main() {
   });
 
   console.log(`Gateway listening at ${url}`);
-  console.log(`Currency DGS URL: ${currencyDgsUrl}`);
 }
 
 main().catch((error) => {

@@ -736,12 +736,15 @@ services:
     environment:
       - GRAPHQL_GATEWAY_PORT
       - CURRENCY_DGS_ADDR
+      - CART_DGS_ADDR
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=gateway
       - GRAPHQL_ENABLE_UI
       - GRAPHQL_ENABLE_INTROSPECTION
     depends_on:
       currency-dgs:
+        condition: service_started
+      cart-dgs:
         condition: service_started
     logging: *logging
 
