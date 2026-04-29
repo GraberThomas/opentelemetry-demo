@@ -13,6 +13,7 @@ const port = getRequiredNumberEnv("GRAPHQL_GATEWAY_PORT");
 
 const currencyDgsUrl = getRequiredEnv("CURRENCY_DGS_ADDR");
 const cartDgsUrl = getRequiredEnv("CART_DGS_ADDR");
+const adDgsUrl = getRequiredEnv("AD_DGS_ADDR");
 
 const enableUi = process.env.GRAPHQL_ENABLE_UI === "true";
 const enableIntrospection =
@@ -33,6 +34,10 @@ async function main() {
         {
           name: "cart",
           url: cartDgsUrl
+        },
+        {
+          name: "ad",
+          url: adDgsUrl
         }
       ],
     }),

@@ -715,7 +715,7 @@ services:
         condition: service_started
     logging: *logging
 
-    # Cart DGS
+  # Ad DGS
   ad-dgs:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-ad-dgs
     container_name: ad-dgs
@@ -764,6 +764,7 @@ services:
       - GRAPHQL_GATEWAY_PORT
       - CURRENCY_DGS_ADDR
       - CART_DGS_ADDR
+      - AD_DGS_ADDR
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=gateway
       - GRAPHQL_ENABLE_UI
@@ -772,6 +773,8 @@ services:
       currency-dgs:
         condition: service_started
       cart-dgs:
+        condition: service_started
+      ad-dgs:
         condition: service_started
     logging: *logging
 
