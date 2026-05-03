@@ -7,7 +7,7 @@ import ShippingGateway from "./http/shipping-gateway.js";
 
 export const resolvers = {
   Query: {
-    getShippingQuote: async (
+    shippingQuote: async (
       _: unknown,
       args: {
         items: {

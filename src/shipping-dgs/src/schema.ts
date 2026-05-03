@@ -27,7 +27,7 @@ export const schema = buildSubgraphSchema({
     }
 
     input CartItemInput {
-      productId: String!
+      productId: ID!
       quantity: Int!
     }
 
@@ -40,7 +40,7 @@ export const schema = buildSubgraphSchema({
     }
 
     type Query {
-      getShippingQuote(
+      shippingQuote(
         items: [CartItemInput!]!
         address: AddressInput
       ): ShippingQuote!

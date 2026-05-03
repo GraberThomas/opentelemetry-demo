@@ -9,7 +9,10 @@ import { resolvers } from "./resolvers.js";
 
 export const schema = buildSubgraphSchema({
   typeDefs: gql`
-    type Money {
+    extend schema
+      @link(url: "https://specs.apollo.dev/federation/v2.3", import: ["@shareable"])
+
+    type Money @shareable {
       currencyCode: String!
       units: Int!
       nanos: Int!
