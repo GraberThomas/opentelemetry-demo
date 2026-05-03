@@ -796,6 +796,33 @@ services:
         condition: service_started
     logging: *logging
   
+  # Product Catalog DGS
+  product-catalog-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog-dgs
+    container_name: product-catalog-dgs
+    build:
+      context: ./
+      dockerfile: ${PRODUCT_CATALOG_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-catalog-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${PRODUCT_CATALOG_DGS_PORT}"
+    environment:
+      - PRODUCT_CATALOG_DGS_PORT
+      - PRODUCT_CATALOG_ADDR=product-catalog:${PRODUCT_CATALOG_PORT}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=product-catalog-dgs
+      - GRAPHQL_ENABLE_UI
+    depends_on:
+      product-catalog:
+        condition: service_started
+    logging: *logging
+  
   # ******************
   # GraphQL Gateway
   # ******************

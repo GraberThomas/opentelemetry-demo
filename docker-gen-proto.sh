@@ -70,6 +70,7 @@ if [ -z "$1" ]; then
   copy_frontend_proto_to_dgs cart-dgs
   copy_frontend_proto_to_dgs ad-dgs
   copy_frontend_proto_to_dgs recommendation-dgs
+  copy_frontend_proto_to_dgs product-catalog-dgs
   #gen_proto_js payment
   gen_proto_go product-catalog
   #gen_proto_php quote
