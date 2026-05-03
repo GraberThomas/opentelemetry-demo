@@ -17,6 +17,7 @@ const adDgsUrl = getRequiredEnv("AD_DGS_ADDR");
 const shippingDgsUrl = getRequiredEnv("SHIPPING_DGS_ADDR");
 const recommendationDgsUrl = getRequiredEnv("RECOMMENDATION_DGS_ADDR");
 const productCatalogDgsUrl = getRequiredEnv("PRODUCT_CATALOG_DGS_ADDR");
+const productReviewsDgsUrl = getRequiredEnv("PRODUCT_REVIEWS_DGS_ADDR");
 
 const enableUi = process.env.GRAPHQL_ENABLE_UI === "true";
 const enableIntrospection =
@@ -53,6 +54,10 @@ async function main() {
         {
           name: "productCatalog",
           url: productCatalogDgsUrl
+        },
+        {
+          name: "productReviews",
+          url: productReviewsDgsUrl
         }
       ],
     }),
