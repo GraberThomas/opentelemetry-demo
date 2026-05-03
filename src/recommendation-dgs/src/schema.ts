@@ -9,8 +9,18 @@ import { resolvers } from "./resolvers.js";
 
 export const schema = buildSubgraphSchema({
   typeDefs: gql`
+    extend schema
+      @link(
+        url: "https://specs.apollo.dev/federation/v2.3"
+        import: ["@key"]
+      )
+
+    type Product @key(fields: "id", resolvable: false) {
+      id: ID!
+    }
+
     type Query {
-      recommendations(userId: ID!, productIds: [ID!]!): [ID!]!
+      recommendations(userId: ID!, productIds: [ID!]!): [Product!]!
     }
   `,
   resolvers,
