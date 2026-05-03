@@ -769,6 +769,33 @@ services:
         condition: service_started
     logging: *logging
   
+  # Recommendation DGS
+  recommendation-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendation-dgs
+    container_name: recommendation-dgs
+    build:
+      context: ./
+      dockerfile: ${RECOMMENDATION_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendation-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${RECOMMENDATION_DGS_PORT}"
+    environment:
+      - RECOMMENDATION_DGS_PORT
+      - RECOMMENDATION_ADDR=recommendation:${RECOMMENDATION_PORT}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
+      - OTEL_SERVICE_NAME=recommendation-dgs
+      - GRAPHQL_ENABLE_UI
+    depends_on:
+      recommendation:
+        condition: service_started
+    logging: *logging
+  
   # ******************
   # GraphQL Gateway
   # ******************

@@ -91,3 +91,4 @@ gen_proto_rust shipping
 copy_frontend_proto_to_dgs currency-dgs
 copy_frontend_proto_to_dgs cart-dgs
 copy_frontend_proto_to_dgs ad-dgs
+copy_frontend_proto_to_dgs recommendation-dgs
