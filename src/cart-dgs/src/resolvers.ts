@@ -52,7 +52,9 @@ export const resolvers = {
 
     emptyCart: async (_: unknown, args: { userId: string }) => {
       await CartGateway.emptyCart(args.userId);
-      return true;
+
+      const cart = await CartGateway.getCart(args.userId);
+      return mapCart(cart, args.userId);
     },
   },
 };

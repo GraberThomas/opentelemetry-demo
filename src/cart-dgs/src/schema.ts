@@ -18,7 +18,7 @@ export const schema = buildSubgraphSchema({
     type Product @key(fields: "id", resolvable: false) {
       id: ID!
     }
-    
+
     type CartItem {
       productId: ID!
       quantity: Int!
@@ -41,7 +41,7 @@ export const schema = buildSubgraphSchema({
 
     type Mutation {
       addItem(userId: ID!, item: CartItemInput!): Cart!
-      emptyCart(userId: ID!): Boolean!
+      emptyCart(userId: ID!): Cart!
     }
   `,
   resolvers,
