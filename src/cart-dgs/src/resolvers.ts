@@ -9,6 +9,15 @@ type CartItemReference = {
   productId: string;
 };
 
+type CartResponse = Awaited<ReturnType<typeof CartGateway.getCart>>;
+
+function mapCart(cart: CartResponse, userId: string) {
+  return {
+    ...cart,
+    userId: cart.userId || userId,
+  };
+}
+
 export const resolvers = {
   CartItem: {
     product: (cartItem: CartItemReference) => ({
@@ -19,7 +28,8 @@ export const resolvers = {
 
   Query: {
     cart: async (_: unknown, args: { userId: string }) => {
-      return CartGateway.getCart(args.userId);
+      const cart = await CartGateway.getCart(args.userId);
+      return mapCart(cart, args.userId);
     },
   },
 
@@ -35,7 +45,9 @@ export const resolvers = {
       }
     ) => {
       await CartGateway.addItem(args.userId, args.item);
-      return CartGateway.getCart(args.userId);
+
+      const cart = await CartGateway.getCart(args.userId);
+      return mapCart(cart, args.userId);
     },
 
     emptyCart: async (_: unknown, args: { userId: string }) => {
