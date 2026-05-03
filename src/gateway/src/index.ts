@@ -15,7 +15,8 @@ const currencyDgsUrl = getRequiredEnv("CURRENCY_DGS_ADDR");
 const cartDgsUrl = getRequiredEnv("CART_DGS_ADDR");
 const adDgsUrl = getRequiredEnv("AD_DGS_ADDR");
 const shippingDgsUrl = getRequiredEnv("SHIPPING_DGS_ADDR");
-const recommendationDgsUrl = getRequiredEnv("RECOMMENDATION_DGS_ADDR")
+const recommendationDgsUrl = getRequiredEnv("RECOMMENDATION_DGS_ADDR");
+const productCatalogDgsUrl = getRequiredEnv("PRODUCT_CATALOG_DGS_ADDR");
 
 const enableUi = process.env.GRAPHQL_ENABLE_UI === "true";
 const enableIntrospection =
@@ -48,6 +49,10 @@ async function main() {
         {
           name: "recommendation",
           url: recommendationDgsUrl
+        },
+        {
+          name: "productCatalog",
+          url: productCatalogDgsUrl
         }
       ],
     }),
