@@ -93,3 +93,4 @@ copy_frontend_proto_to_dgs cart-dgs
 copy_frontend_proto_to_dgs ad-dgs
 copy_frontend_proto_to_dgs recommendation-dgs
 copy_frontend_proto_to_dgs product-catalog-dgs
+copy_frontend_proto_to_dgs product-reviews-dgs

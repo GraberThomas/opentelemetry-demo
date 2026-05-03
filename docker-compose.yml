@@ -822,6 +822,33 @@ services:
       product-catalog:
         condition: service_started
     logging: *logging
+
+  # Product Reviews DGS
+  product-reviews-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-reviews-dgs
+    container_name: product-reviews-dgs
+    build:
+      context: ./
+      dockerfile: ${PRODUCT_REVIEWS_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-reviews-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${PRODUCT_REVIEWS_DGS_PORT}"
+    environment:
+      - PRODUCT_REVIEWS_DGS_PORT
+      - PRODUCT_REVIEWS_ADDR=product-reviews:${PRODUCT_REVIEWS_PORT}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
+      - OTEL_SERVICE_NAME=product-reviews-dgs
+      - GRAPHQL_ENABLE_UI
+    depends_on:
+      product-reviews:
+        condition: service_started
+    logging: *logging
   
   # ******************
   # GraphQL Gateway
