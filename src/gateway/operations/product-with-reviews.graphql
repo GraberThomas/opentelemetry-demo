@@ -1,0 +1,22 @@
+# Teste l'intégration des reviews et commentaire IA directement dans la requete des produits
+query ProductsWithReviews($question: String!) {
+  products {
+    id
+    name
+    description
+    picture
+    categories
+    priceUsd {
+      currencyCode
+      units
+      nanos
+    }
+    averageReviewScore
+    aiReviewSummary(question: $question)
+    reviews {
+      username
+      score
+      description
+    }
+  }
+}

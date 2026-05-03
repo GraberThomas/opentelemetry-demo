@@ -1,0 +1,16 @@
+# Valide le service currency-dgs
+query Currency {
+  supportedCurrencies
+  convertCurrency(
+    from: {
+      currencyCode: "USD"
+      units: 100
+      nanos: 0
+    }
+    toCode: "EUR"
+  ) {
+    currencyCode
+    units
+    nanos
+  }
+}

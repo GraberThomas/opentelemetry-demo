@@ -1,0 +1,38 @@
+# Teste la finalisation d'une commande (placeOrder vide le panier après coup)
+mutation PlaceOrder($input: PlaceOrderInput!) {
+  placeOrder(input: $input) {
+    orderId
+    shippingTrackingId
+    shippingCost {
+      currencyCode
+      units
+      nanos
+    }
+    shippingAddress {
+      streetAddress
+      city
+      state
+      country
+      zipCode
+    }
+    items {
+      productId
+      quantity
+      cost {
+        currencyCode
+        units
+        nanos
+      }
+      product {
+        id
+        name
+        picture
+        priceUsd {
+          currencyCode
+          units
+          nanos
+        }
+      }
+    }
+  }
+}

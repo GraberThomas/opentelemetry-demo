@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "productId": "OLJCESPC7Z",
+      "quantity": 1
+    }
+  ],
+  "address": {
+    "streetAddress": "46 rue Marceau",
+    "city": "Brest",
+    "state": "Bretagne",
+    "country": "France",
+    "zipCode": "29200"
+  }
+}

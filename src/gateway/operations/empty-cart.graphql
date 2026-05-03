@@ -1,0 +1,14 @@
+# Nettoie le panier pour préparer/finaliser les tests
+mutation EmptyCart($userId: ID!) {
+  emptyCart(userId: $userId) {
+    userId
+    items {
+      productId
+      quantity
+      product {
+        id
+        name
+      }
+    }
+  }
+}

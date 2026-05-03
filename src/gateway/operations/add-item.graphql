@@ -1,0 +1,19 @@
+# Prépare les tests cart et placeOrder en ajoutant un article au panier.
+mutation AddItem($userId: ID!, $item: CartItemInput!) {
+  addItem(userId: $userId, item: $item) {
+    userId
+    items {
+      productId
+      quantity
+      product {
+        id
+        name
+        priceUsd {
+          currencyCode
+          units
+          nanos
+        }
+      }
+    }
+  }
+}

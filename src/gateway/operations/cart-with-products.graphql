@@ -1,0 +1,21 @@
+# Teste la résolution du panier avec la fédération des produits (cart-dgs, CartItem.product, product-catalog-dgs, product-reviews-dgs)
+query CartWithProducts($userId: ID!) {
+  cart(userId: $userId) {
+    userId
+    items {
+      productId
+      quantity
+      product {
+        id
+        name
+        picture
+        priceUsd {
+          currencyCode
+          units
+          nanos
+        }
+        averageReviewScore
+      }
+    }
+  }
+}

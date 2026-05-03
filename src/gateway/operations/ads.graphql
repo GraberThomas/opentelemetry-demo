@@ -1,0 +1,7 @@
+# Valide la récupération de publicités
+query Ads($contextKeys: [String!]!) {
+  ads(contextKeys: $contextKeys) {
+    text
+    redirectUrl
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "input": {
+    "userId": "eed16b69-2fd4-4222-af85-ee02aca3e0ec",
+    "userCurrency": "EUR",
+    "address": {
+      "streetAddress": "46 rue Marceau",
+      "city": "Brest",
+      "state": "Bretagne",
+      "country": "France",
+      "zipCode": "29200"
+    },
+    "email": "test@gmail.com",
+    "creditCard": {
+      "creditCardNumber": "4111111111111111",
+      "creditCardCvv": 123,
+      "creditCardExpirationYear": 2030,
+      "creditCardExpirationMonth": 12
+    }
+  }
+}

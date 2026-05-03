@@ -1,0 +1,16 @@
+# Teste que recommendation-dgs retourne maintenant des références fédérées Product, pas juste des IDs.
+query Recommendations($userId: ID!, $productIds: [ID!]!) {
+  recommendations(userId: $userId, productIds: $productIds) {
+    id
+    name
+    description
+    picture
+    categories
+    priceUsd {
+      currencyCode
+      units
+      nanos
+    }
+    averageReviewScore
+  }
+}
