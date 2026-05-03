@@ -820,6 +820,7 @@ services:
       - CART_DGS_ADDR
       - AD_DGS_ADDR
       - SHIPPING_DGS_ADDR
+      - RECOMMENDATION_DGS_ADDR
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=gateway
       - GRAPHQL_ENABLE_UI
@@ -832,6 +833,8 @@ services:
       ad-dgs:
         condition: service_started
       shipping-dgs:
+        condition: service_started
+      recommendation-dgs:
         condition: service_started
     logging: *logging
 
