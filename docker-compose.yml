@@ -742,6 +742,33 @@ services:
         condition: service_started
     logging: *logging
   
+  # Shipping DGS
+  shipping-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-shipping-dgs
+    container_name: shipping-dgs
+    build:
+      context: ./
+      dockerfile: ${SHIPPING_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-shipping-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${SHIPPING_DGS_PORT}"
+    environment:
+      - SHIPPING_DGS_PORT
+      - SHIPPING_ADDR=http://shipping:${SHIPPING_PORT}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=shipping-dgs
+      - GRAPHQL_ENABLE_UI
+    depends_on:
+      shipping:
+        condition: service_started
+    logging: *logging
+  
   # ******************
   # GraphQL Gateway
   # ******************
