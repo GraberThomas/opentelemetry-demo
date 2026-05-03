@@ -850,6 +850,33 @@ services:
         condition: service_started
     logging: *logging
   
+  # Checkout DGS
+  checkout-dgs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-checkout-dgs
+    container_name: checkout-dgs
+    build:
+      context: ./
+      dockerfile: ${CHECKOUT_DGS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-checkout-dgs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${CHECKOUT_DGS_PORT}"
+    environment:
+      - CHECKOUT_DGS_PORT
+      - CHECKOUT_ADDR=checkout:${CHECKOUT_PORT}
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
+      - OTEL_SERVICE_NAME=checkout-dgs
+      - GRAPHQL_ENABLE_UI
+    depends_on:
+      checkout:
+        condition: service_started
+    logging: *logging
+  
   # ******************
   # GraphQL Gateway
   # ******************

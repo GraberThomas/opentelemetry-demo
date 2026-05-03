@@ -1,0 +1,25 @@
+{
+  "name": "checkout-dgs",
+  "description": "DGS service for checkout service",
+  "repository": "https://github.com/opentelemetry/opentelemetry-demo",
+  "type": "module",
+  "author": "Thomas Graber",
+  "license": "ISC",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/src/index.js"
+  },
+  "dependencies": {
+    "@apollo/subgraph": "^2.13.3",
+    "@bufbuild/protobuf": "^2.12.0",
+    "@grpc/grpc-js": "^1.14.3",
+    "graphql-tag": "^2.12.6",
+    "graphql-yoga": "^5.21.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3"
+  }
+}
