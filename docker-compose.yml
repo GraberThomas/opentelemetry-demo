@@ -904,6 +904,7 @@ services:
       - RECOMMENDATION_DGS_ADDR
       - PRODUCT_CATALOG_DGS_ADDR
       - PRODUCT_REVIEWS_DGS_ADDR
+      - CHECKOUT_DGS_ADDR
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=gateway
       - GRAPHQL_ENABLE_UI
@@ -922,6 +923,8 @@ services:
       product-catalog-dgs:
         condition: service_started
       product-reviews-dgs:
+        condition: service_started
+      checkout-dgs:
         condition: service_started
     logging: *logging
 
