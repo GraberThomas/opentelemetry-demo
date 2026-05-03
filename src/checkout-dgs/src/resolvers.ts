@@ -28,6 +28,10 @@ type PlaceOrderArgs = {
   };
 };
 
+type OrderItemReference = {
+  productId: string;
+};
+
 function requireField<T>(value: T | null | undefined, fieldName: string): T {
   if (value === null || value === undefined) {
     throw new GraphQLError(`Checkout order response is missing ${fieldName}.`, {
@@ -108,6 +112,13 @@ function mapOrder(order: any) {
 }
 
 export const resolvers = {
+  OrderItem: {
+    product: (orderItem: OrderItemReference) => ({
+      __typename: "Product",
+      id: orderItem.productId,
+    }),
+  },
+
   Mutation: {
     placeOrder: async (_: unknown, args: PlaceOrderArgs) => {
       let response: Awaited<ReturnType<typeof CheckoutGateway.placeOrder>>;

@@ -12,8 +12,12 @@ export const schema = buildSubgraphSchema({
     extend schema
       @link(
         url: "https://specs.apollo.dev/federation/v2.3"
-        import: ["@shareable"]
+        import: ["@key", "@shareable"]
       )
+
+    type Product @key(fields: "id", resolvable: false) {
+      id: ID!
+    }
 
     type Money @shareable {
       currencyCode: String!
@@ -55,6 +59,7 @@ export const schema = buildSubgraphSchema({
     type OrderItem {
       productId: ID!
       quantity: Int!
+      product: Product!
       cost: Money!
     }
 
