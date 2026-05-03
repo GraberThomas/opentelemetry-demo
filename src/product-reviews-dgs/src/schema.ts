@@ -25,7 +25,7 @@ export const schema = buildSubgraphSchema({
       id: ID! @external
       reviews: [ProductReview!]!
       averageReviewScore: String!
-      aiReviewSummary(question: String!): String!
+      aiReviewSummary(question: String!): String
     }
   `,
   resolvers,

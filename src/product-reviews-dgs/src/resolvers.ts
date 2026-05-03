@@ -2,6 +2,7 @@
  * Copyright The OpenTelemetry Authors
  * SPDX-License-Identifier: Apache-2.0
  */
+
 import ProductReviewsGateway from "./grpc/product-reviews-gateway.js";
 
 type ProductReference = {
@@ -26,12 +27,21 @@ export const resolvers = {
       product: ProductReference,
       args: { question: string }
     ) => {
-      const response = await ProductReviewsGateway.askProductAiAssistant(
-        product.id,
-        args.question
-      );
+      try {
+        const response = await ProductReviewsGateway.askProductAiAssistant(
+          product.id,
+          args.question
+        );
 
-      return response.response;
+        return response.response;
+      } catch (error) {
+        console.error(
+          `Failed to generate AI review summary for product ${product.id}`,
+          error
+        );
+
+        return null;
+      }
     },
   },
 };
