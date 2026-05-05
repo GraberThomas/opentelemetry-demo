@@ -7,6 +7,7 @@ import request from '../utils/Request';
 import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
 import { context, propagation } from "@opentelemetry/api";
+import { graphqlRequest } from './graphql/GraphQL.gateway';
 
 const { userId } = SessionGateway.getSession();
 
@@ -36,9 +37,15 @@ const Apis = () => ({
   },
 
   getSupportedCurrencyList() {
-    return request<string[]>({
-      url: `${basePath}/currency`,
-    });
+    return graphqlRequest<{ supportedCurrencies: string[] }>(
+      `
+        query Currency {
+          supportedCurrencies
+        }
+      `,
+      undefined,
+      'Currency'
+    ).then(data => data.supportedCurrencies);
   },
 
   getShippingCost(itemList: IProductCartItem[], currencyCode: string, address: Address) {

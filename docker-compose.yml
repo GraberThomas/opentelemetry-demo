@@ -289,6 +289,7 @@ services:
       - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
+      - GRAPHQL_GATEWAY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - ENV_PLATFORM
@@ -321,6 +322,8 @@ services:
       image-provider:
         condition: service_started
       flagd:
+        condition: service_started
+      graphql-gateway:
         condition: service_started
     logging: *logging
 
