@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Teste l'intégration des reviews et commentaire IA directement en interrogeant la fiche d'un produit, ainsi que la conversion du prix dans une monnaie.
+# Validates product detail resolution with reviews, AI-generated review summary, and converted product pricing.
 query ProductDetails($productId: ID!, $question: String!, $currencyCode: String = "EUR") {
   product(id: $productId) {
     id

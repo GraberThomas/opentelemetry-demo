@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Teste la résolution du panier avec la fédération des produits (cart-dgs, CartItem.product, product-catalog-dgs, product-reviews-dgs) et la conversion des prix dans une monnaie
+# Validates cart resolution with federated product details, review data, and converted pricing.
 query CartWithProducts($userId: ID!, $currencyCode: String = "EUR") {
   cart(userId: $userId) {
     userId

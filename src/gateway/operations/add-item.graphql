@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Prépare les tests cart et placeOrder en ajoutant un article au panier.
+# Adds an item to the cart to prepare cart and checkout gateway operation tests.
 mutation AddItem($userId: ID!, $item: CartItemInput!) {
   addItem(userId: $userId, item: $item) {
     userId

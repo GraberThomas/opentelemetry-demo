@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Teste le calcul des frais d'expédition (shipping-quote)
+# Validates shipping cost calculation for a list of cart items and an optional shipping address.
 query ShippingQuote($items: [CartItemInput!]!, $address: AddressInput) {
   shippingQuote(items: $items, address: $address) {
     costUsd {

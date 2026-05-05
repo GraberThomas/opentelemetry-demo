@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Teste que recommendation-dgs retourne maintenant des références fédérées Product, pas juste des IDs. Ainsi que la conversion des prix dans une monnaie
+# Validates that recommendation-dgs returns federated Product references with reviews and converted pricing.
 query Recommendations($userId: ID!, $productIds: [ID!]!, $currencyCode: String = "EUR") {
   recommendations(userId: $userId, productIds: $productIds) {
     id

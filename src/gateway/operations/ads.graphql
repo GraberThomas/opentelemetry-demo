@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Valide la récupération de publicités
+# Validates ad retrieval for the provided context keys.
 query Ads($contextKeys: [String!]!) {
   ads(contextKeys: $contextKeys) {
     text

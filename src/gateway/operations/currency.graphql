@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Valide le service currency-dgs
+# Validates currency-dgs by listing supported currencies and converting a sample amount.
 query Currency {
   supportedCurrencies
   convertCurrency(
