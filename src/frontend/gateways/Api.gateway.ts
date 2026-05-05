@@ -131,12 +131,76 @@ const Apis = () => ({
   },
 
   placeOrder({ currencyCode, ...order }: PlaceOrderRequest & { currencyCode: string }) {
-    return request<IProductCheckout>({
-      url: `${basePath}/checkout`,
-      method: 'POST',
-      queryParams: { currencyCode },
-      body: order,
-    });
+    return graphqlRequest<{
+      placeOrder: Omit<IProductCheckout, 'items'> & {
+        items: Array<{
+          productId: string;
+          quantity: number;
+          cost: Money;
+          product: Product;
+        }>;
+      };
+    }>(
+      `
+        mutation PlaceOrder($input: PlaceOrderInput!, $currencyCode: String = "USD") {
+          placeOrder(input: $input) {
+            orderId
+            shippingTrackingId
+            shippingCost {
+              currencyCode
+              units
+              nanos
+            }
+            shippingAddress {
+              streetAddress
+              city
+              state
+              country
+              zipCode
+            }
+            items {
+              productId
+              quantity
+              cost {
+                currencyCode
+                units
+                nanos
+              }
+              product {
+                id
+                name
+                description
+                picture
+                categories
+                priceUsd: price(currencyCode: $currencyCode) {
+                  currencyCode
+                  units
+                  nanos
+                }
+              }
+            }
+          }
+        }
+      `,
+      {
+        input: {
+          ...order,
+          userCurrency: currencyCode,
+        },
+        currencyCode,
+      },
+      'PlaceOrder'
+    ).then(({ placeOrder }) => ({
+      ...placeOrder,
+      items: placeOrder.items.map(({ productId, quantity, cost, product }) => ({
+        cost,
+        item: {
+          productId,
+          quantity,
+          product,
+        },
+      })),
+    }));
   },
 
   listProducts(currencyCode: string) {
