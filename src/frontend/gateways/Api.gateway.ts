@@ -92,11 +92,34 @@ const Apis = () => ({
   },
 
   getProduct(productId: string, currencyCode: string) {
-    return request<Product>({
-      url: `${basePath}/products/${productId}`,
-      queryParams: { currencyCode },
+    return graphqlRequest<{ product: Product | null }>(
+      `
+        query Product($productId: ID!, $currencyCode: String = "USD") {
+          product(id: $productId) {
+            id
+            name
+            description
+            picture
+            categories
+            priceUsd: price(currencyCode: $currencyCode) {
+              currencyCode
+              units
+              nanos
+            }
+          }
+        }
+      `,
+      { productId, currencyCode },
+      'Product'
+    ).then(data => {
+      if (!data.product) {
+        throw new Error(`Product ${productId} not found`);
+      }
+
+      return data.product;
     });
   },
+
   getProductReviews(productId: string) {
     return request<ProductReview[]>({
       url: `${basePath}/product-reviews/${productId}`
