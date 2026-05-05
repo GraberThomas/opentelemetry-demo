@@ -137,16 +137,30 @@ const Apis = () => ({
       body: { question },
     });
   },
+
   listRecommendations(productIds: string[], currencyCode: string) {
-    return request<Product[]>({
-      url: `${basePath}/recommendations`,
-      queryParams: {
-        productIds,
-        sessionId: userId,
-        currencyCode,
-      },
-    });
+    return graphqlRequest<{ recommendations: Product[] }>(
+      `
+        query Recommendations($userId: ID!, $productIds: [ID!]!, $currencyCode: String = "USD") {
+          recommendations(userId: $userId, productIds: $productIds) {
+            id
+            name
+            description
+            picture
+            categories
+            priceUsd: price(currencyCode: $currencyCode) {
+              currencyCode
+              units
+              nanos
+            }
+          }
+        }
+      `,
+      { userId, productIds, currencyCode },
+      'Recommendations'
+    ).then(data => data.recommendations);
   },
+
   listAds(contextKeys: string[]) {
     return request<Ad[]>({
       url: `${basePath}/data`,
