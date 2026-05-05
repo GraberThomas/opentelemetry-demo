@@ -937,6 +937,8 @@ services:
       - PRODUCT_CATALOG_DGS_ADDR
       - PRODUCT_REVIEWS_DGS_ADDR
       - CHECKOUT_DGS_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=gateway
       - GRAPHQL_ENABLE_UI
@@ -957,6 +959,8 @@ services:
       product-reviews-dgs:
         condition: service_started
       checkout-dgs:
+        condition: service_started
+      otel-collector:
         condition: service_started
     logging: *logging
 
