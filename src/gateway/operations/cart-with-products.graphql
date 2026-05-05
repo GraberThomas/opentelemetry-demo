@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Teste la résolution du panier avec la fédération des produits (cart-dgs, CartItem.product, product-catalog-dgs, product-reviews-dgs)
 query CartWithProducts($userId: ID!) {
   cart(userId: $userId) {

@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Teste la finalisation d'une commande (placeOrder vide le panier après coup)
 mutation PlaceOrder($input: PlaceOrderInput!) {
   placeOrder(input: $input) {

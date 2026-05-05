@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Teste le calcul des frais d'expédition (shipping-quote)
 query ShippingQuote($items: [CartItemInput!]!, $address: AddressInput) {
   shippingQuote(items: $items, address: $address) {

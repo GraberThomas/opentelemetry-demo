@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Valide le service currency-dgs
 query Currency {
   supportedCurrencies

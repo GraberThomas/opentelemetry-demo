@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Prépare les tests cart et placeOrder en ajoutant un article au panier.
 mutation AddItem($userId: ID!, $item: CartItemInput!) {
   addItem(userId: $userId, item: $item) {

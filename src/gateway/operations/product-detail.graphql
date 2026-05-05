@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Teste l'intégration des reviews et commentaire IA directement en interrogeant la fiche d'un produit
 query ProductDetails($productId: ID!, $question: String!) {
   product(id: $productId) {

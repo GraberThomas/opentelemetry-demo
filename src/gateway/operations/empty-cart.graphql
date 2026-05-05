@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Nettoie le panier pour préparer/finaliser les tests
 mutation EmptyCart($userId: ID!) {
   emptyCart(userId: $userId) {

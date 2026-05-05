@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Teste que recommendation-dgs retourne maintenant des références fédérées Product, pas juste des IDs.
 query Recommendations($userId: ID!, $productIds: [ID!]!) {
   recommendations(userId: $userId, productIds: $productIds) {
