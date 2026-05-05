@@ -1,8 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Teste l'intégration des reviews et commentaire IA directement en interrogeant la fiche d'un produit
-query ProductDetails($productId: ID!, $question: String!) {
+# Teste l'intégration des reviews et commentaire IA directement en interrogeant la fiche d'un produit, ainsi que la conversion du prix dans une monnaie.
+query ProductDetails($productId: ID!, $question: String!, $currencyCode: String = "EUR") {
   product(id: $productId) {
     id
     name
@@ -10,6 +10,11 @@ query ProductDetails($productId: ID!, $question: String!) {
     picture
     categories
     priceUsd {
+      currencyCode
+      units
+      nanos
+    }
+    price(currencyCode: $currencyCode) {
       currencyCode
       units
       nanos

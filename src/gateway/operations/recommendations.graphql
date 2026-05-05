@@ -1,8 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Teste que recommendation-dgs retourne maintenant des références fédérées Product, pas juste des IDs.
-query Recommendations($userId: ID!, $productIds: [ID!]!) {
+# Teste que recommendation-dgs retourne maintenant des références fédérées Product, pas juste des IDs. Ainsi que la conversion des prix dans une monnaie
+query Recommendations($userId: ID!, $productIds: [ID!]!, $currencyCode: String = "EUR") {
   recommendations(userId: $userId, productIds: $productIds) {
     id
     name
@@ -10,6 +10,11 @@ query Recommendations($userId: ID!, $productIds: [ID!]!) {
     picture
     categories
     priceUsd {
+      currencyCode
+      units
+      nanos
+    }
+    price(currencyCode: $currencyCode) {
       currencyCode
       units
       nanos
