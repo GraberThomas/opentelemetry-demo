@@ -26,4 +26,4 @@ COPY --from=builder /usr/src/app/dist/ dist/
 
 EXPOSE ${CHECKOUT_DGS_PORT}
 
-CMD ["dist/src/index.js"]
+CMD ["--import", "./dist/src/instrumentation.js", "dist/src/index.js"]

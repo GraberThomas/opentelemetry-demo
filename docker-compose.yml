@@ -897,10 +897,14 @@ services:
     environment:
       - CHECKOUT_DGS_PORT
       - CHECKOUT_ADDR=checkout:${CHECKOUT_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=checkout-dgs
       - GRAPHQL_ENABLE_UI
     depends_on:
+      otel-collector:
+        condition: service_started
       checkout:
         condition: service_started
     logging: *logging
