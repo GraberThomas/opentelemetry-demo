@@ -93,14 +93,41 @@ const Apis = () => ({
   },
 
   getShippingCost(itemList: IProductCartItem[], currencyCode: string, address: Address) {
-    return request<Money>({
-      url: `${basePath}/shipping`,
-      queryParams: {
-        itemList: JSON.stringify(itemList.map(({ productId, quantity }) => ({ productId, quantity }))),
-        currencyCode,
-        address: JSON.stringify(address),
+    return graphqlRequest<{ shippingQuote: { costUsd: Money } }>(
+      `
+        query ShippingQuote($items: [CartItemInput!]!, $address: AddressInput) {
+          shippingQuote(items: $items, address: $address) {
+            costUsd {
+              currencyCode
+              units
+              nanos
+            }
+          }
+        }
+      `,
+      {
+        items: itemList.map(({ productId, quantity }) => ({ productId, quantity })),
+        address,
       },
-    });
+      'ShippingQuote'
+    ).then(data =>
+      graphqlRequest<{ convertCurrency: Money }>(
+        `
+          query ConvertShippingCost($from: MoneyInput!, $currencyCode: String!) {
+            convertCurrency(from: $from, toCode: $currencyCode) {
+              currencyCode
+              units
+              nanos
+            }
+          }
+        `,
+        {
+          from: data.shippingQuote.costUsd,
+          currencyCode,
+        },
+        'ConvertShippingCost'
+      ).then(result => result.convertCurrency)
+    );
   },
 
   placeOrder({ currencyCode, ...order }: PlaceOrderRequest & { currencyCode: string }) {
