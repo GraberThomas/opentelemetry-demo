@@ -145,10 +145,25 @@ const Apis = () => ({
   },
 
   getAverageProductReviewScore(productId: string) {
-    return request<string>({
-      url: `${basePath}/product-reviews-avg-score/${productId}`
+    return graphqlRequest<{ product: { averageReviewScore: string } | null }>(
+      `
+        query ProductAverageReviewScore($productId: ID!) {
+          product(id: $productId) {
+            averageReviewScore
+          }
+        }
+      `,
+      { productId },
+      'ProductAverageReviewScore'
+    ).then(data => {
+      if (!data.product) {
+        throw new Error(`Product ${productId} not found`);
+      }
+
+      return data.product.averageReviewScore;
     });
   },
+
   askProductAIAssistant(productId: string, question: string) {
     return request<string>({
       url: `${basePath}/product-ask-ai-assistant/${productId}`,
