@@ -804,11 +804,15 @@ services:
     environment:
       - RECOMMENDATION_DGS_PORT
       - RECOMMENDATION_ADDR=recommendation:${RECOMMENDATION_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_SERVICE_NAME=recommendation-dgs
       - GRAPHQL_ENABLE_UI
     depends_on:
       recommendation:
+        condition: service_started
+      otel-collector:
         condition: service_started
     logging: *logging
   
