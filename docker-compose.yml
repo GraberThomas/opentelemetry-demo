@@ -773,11 +773,15 @@ services:
     environment:
       - SHIPPING_DGS_PORT
       - SHIPPING_ADDR=http://shipping:${SHIPPING_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=shipping-dgs
       - GRAPHQL_ENABLE_UI
     depends_on:
       shipping:
+        condition: service_started
+      otel-collector:
         condition: service_started
     logging: *logging
   
