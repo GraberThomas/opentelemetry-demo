@@ -162,12 +162,18 @@ const Apis = () => ({
   },
 
   listAds(contextKeys: string[]) {
-    return request<Ad[]>({
-      url: `${basePath}/data`,
-      queryParams: {
-        contextKeys,
-      },
-    });
+    return graphqlRequest<{ ads: Ad[] }>(
+      `
+        query Ads($contextKeys: [String!]!) {
+          ads(contextKeys: $contextKeys) {
+            text
+            redirectUrl
+          }
+        }
+      `,
+      { contextKeys },
+      'Ads'
+    ).then(data => data.ads);
   },
 });
 
