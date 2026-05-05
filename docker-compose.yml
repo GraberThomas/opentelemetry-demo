@@ -835,11 +835,15 @@ services:
     environment:
       - PRODUCT_CATALOG_DGS_PORT
       - PRODUCT_CATALOG_ADDR=product-catalog:${PRODUCT_CATALOG_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=product-catalog-dgs
       - GRAPHQL_ENABLE_UI
     depends_on:
       product-catalog:
+        condition: service_started
+      otel-collector:
         condition: service_started
     logging: *logging
 
