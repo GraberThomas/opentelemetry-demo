@@ -866,11 +866,15 @@ services:
     environment:
       - PRODUCT_REVIEWS_DGS_PORT
       - PRODUCT_REVIEWS_ADDR=product-reviews:${PRODUCT_REVIEWS_PORT}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_SERVICE_NAME=product-reviews-dgs
       - GRAPHQL_ENABLE_UI
     depends_on:
       product-reviews:
+        condition: service_started
+      otel-collector:
         condition: service_started
     logging: *logging
   
