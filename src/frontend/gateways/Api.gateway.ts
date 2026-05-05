@@ -121,10 +121,29 @@ const Apis = () => ({
   },
 
   getProductReviews(productId: string) {
-    return request<ProductReview[]>({
-      url: `${basePath}/product-reviews/${productId}`
+    return graphqlRequest<{ product: { reviews: ProductReview[] } | null }>(
+      `
+        query ProductReviews($productId: ID!) {
+          product(id: $productId) {
+            reviews {
+              username
+              description
+              score
+            }
+          }
+        }
+      `,
+      { productId },
+      'ProductReviews'
+    ).then(data => {
+      if (!data.product) {
+        throw new Error(`Product ${productId} not found`);
+      }
+
+      return data.product.reviews;
     });
   },
+
   getAverageProductReviewScore(productId: string) {
     return request<string>({
       url: `${basePath}/product-reviews-avg-score/${productId}`
