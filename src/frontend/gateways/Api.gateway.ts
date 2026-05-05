@@ -15,25 +15,69 @@ const basePath = '/api';
 
 const Apis = () => ({
   getCart(currencyCode: string) {
-    return request<IProductCart>({
-      url: `${basePath}/cart`,
-      queryParams: { sessionId: userId, currencyCode },
-    });
+    return graphqlRequest<{ cart: IProductCart }>(
+      `
+        query Cart($userId: ID!, $currencyCode: String = "USD") {
+          cart(userId: $userId) {
+            userId
+            items {
+              productId
+              quantity
+              product {
+                id
+                name
+                description
+                picture
+                categories
+                priceUsd: price(currencyCode: $currencyCode) {
+                  currencyCode
+                  units
+                  nanos
+                }
+              }
+            }
+          }
+        }
+      `,
+      { userId, currencyCode },
+      'Cart'
+    ).then(data => data.cart);
   },
+
   addCartItem({ currencyCode, ...item }: CartItem & { currencyCode: string }) {
-    return request<Cart>({
-      url: `${basePath}/cart`,
-      body: { item, userId },
-      queryParams: { currencyCode },
-      method: 'POST',
-    });
+    return graphqlRequest<{ addItem: Cart }>(
+      `
+        mutation AddItem($userId: ID!, $item: CartItemInput!) {
+          addItem(userId: $userId, item: $item) {
+            userId
+            items {
+              productId
+              quantity
+            }
+          }
+        }
+      `,
+      { userId, item },
+      'AddItem'
+    ).then(data => data.addItem);
   },
+
   emptyCart() {
-    return request<undefined>({
-      url: `${basePath}/cart`,
-      method: 'DELETE',
-      body: { userId },
-    });
+    return graphqlRequest<{ emptyCart: Cart }>(
+      `
+        mutation EmptyCart($userId: ID!) {
+          emptyCart(userId: $userId) {
+            userId
+            items {
+              productId
+              quantity
+            }
+          }
+        }
+      `,
+      { userId },
+      'EmptyCart'
+    ).then(() => undefined);
   },
 
   getSupportedCurrencyList() {
