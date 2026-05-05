@@ -69,11 +69,28 @@ const Apis = () => ({
   },
 
   listProducts(currencyCode: string) {
-    return request<Product[]>({
-      url: `${basePath}/products`,
-      queryParams: { currencyCode },
-    });
+    return graphqlRequest<{ products: Product[] }>(
+      `
+        query Products($currencyCode: String = "USD") {
+          products {
+            id
+            name
+            description
+            picture
+            categories
+            priceUsd: price(currencyCode: $currencyCode) {
+              currencyCode
+              units
+              nanos
+            }
+          }
+        }
+      `,
+      { currencyCode },
+      'Products'
+    ).then(data => data.products);
   },
+
   getProduct(productId: string, currencyCode: string) {
     return request<Product>({
       url: `${basePath}/products/${productId}`,
