@@ -165,10 +165,22 @@ const Apis = () => ({
   },
 
   askProductAIAssistant(productId: string, question: string) {
-    return request<string>({
-      url: `${basePath}/product-ask-ai-assistant/${productId}`,
-      method: 'POST',
-      body: { question },
+    return graphqlRequest<{ product: { aiReviewSummary: string | null } | null }>(
+      `
+        query ProductAiReviewSummary($productId: ID!, $question: String!) {
+          product(id: $productId) {
+            aiReviewSummary(question: $question)
+          }
+        }
+      `,
+      { productId, question },
+      'ProductAiReviewSummary'
+    ).then(data => {
+      if (!data.product) {
+        throw new Error(`Product ${productId} not found`);
+      }
+
+      return data.product.aiReviewSummary ?? '';
     });
   },
 
