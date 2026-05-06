@@ -107,8 +107,180 @@ products = [
     "HQTGWGPNH4",
 ]
 
-people_file = open('people.json')
+people_file = open("people.json")
 people = json.load(people_file)
+
+
+PRODUCT_QUERY = """
+query Product($productId: ID!, $currencyCode: String = "USD") {
+  product(id: $productId) {
+    id
+    name
+    description
+    picture
+    categories
+    priceUsd: price(currencyCode: $currencyCode) {
+      currencyCode
+      units
+      nanos
+    }
+  }
+}
+"""
+
+RECOMMENDATIONS_QUERY = """
+query Recommendations($userId: ID!, $productIds: [ID!]!, $currencyCode: String = "USD") {
+  recommendations(userId: $userId, productIds: $productIds) {
+    id
+    name
+    description
+    picture
+    categories
+    priceUsd: price(currencyCode: $currencyCode) {
+      currencyCode
+      units
+      nanos
+    }
+  }
+}
+"""
+
+PRODUCT_REVIEWS_QUERY = """
+query ProductReviews($productId: ID!) {
+  product(id: $productId) {
+    reviews {
+      username
+      description
+      score
+    }
+  }
+}
+"""
+
+PRODUCT_AI_REVIEW_SUMMARY_QUERY = """
+query ProductAiReviewSummary($productId: ID!, $question: String!) {
+  product(id: $productId) {
+    aiReviewSummary(question: $question)
+  }
+}
+"""
+
+ADS_QUERY = """
+query Ads($contextKeys: [String!]!) {
+  ads(contextKeys: $contextKeys) {
+    text
+    redirectUrl
+  }
+}
+"""
+
+CART_QUERY = """
+query Cart($userId: ID!, $currencyCode: String = "USD") {
+  cart(userId: $userId) {
+    userId
+    items {
+      productId
+      quantity
+      product {
+        id
+        name
+        description
+        picture
+        categories
+        priceUsd: price(currencyCode: $currencyCode) {
+          currencyCode
+          units
+          nanos
+        }
+      }
+    }
+  }
+}
+"""
+
+ADD_ITEM_MUTATION = """
+mutation AddItem($userId: ID!, $item: CartItemInput!) {
+  addItem(userId: $userId, item: $item) {
+    userId
+    items {
+      productId
+      quantity
+    }
+  }
+}
+"""
+
+PLACE_ORDER_MUTATION = """
+mutation PlaceOrder($input: PlaceOrderInput!, $currencyCode: String = "USD") {
+  placeOrder(input: $input) {
+    orderId
+    shippingTrackingId
+    shippingCost {
+      currencyCode
+      units
+      nanos
+    }
+    shippingAddress {
+      streetAddress
+      city
+      state
+      country
+      zipCode
+    }
+    items {
+      productId
+      quantity
+      cost {
+        currencyCode
+        units
+        nanos
+      }
+      product {
+        id
+        name
+        description
+        picture
+        categories
+        priceUsd: price(currencyCode: $currencyCode) {
+          currencyCode
+          units
+          nanos
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def graphql_request(client, operation_name, query, variables=None):
+    with client.post(
+        "/api/graphql",
+        json={
+            "operationName": operation_name,
+            "query": query,
+            "variables": variables or {},
+        },
+        name=f"GraphQL {operation_name}",
+        catch_response=True,
+    ) as response:
+        try:
+            payload = response.json()
+        except ValueError:
+            response.failure("GraphQL response is not valid JSON")
+            return response
+
+        if response.status_code >= 400:
+            response.failure(f"GraphQL HTTP error: {response.status_code}")
+            return response
+
+        if payload.get("errors"):
+            response.failure(f"GraphQL errors: {payload['errors']}")
+            return response
+
+        response.success()
+        return response
+
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
@@ -126,100 +298,226 @@ class WebsiteUser(HttpUser):
     @task(10)
     def browse_product(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_browse_product", context=Context(), attributes={"product.id": product}):
+        with self.tracer.start_as_current_span(
+            "user_browse_product",
+            context=Context(),
+            attributes={"product.id": product},
+        ):
             logging.info(f"User browsing product: {product}")
-            self.client.get("/api/products/" + product)
+            graphql_request(
+                self.client,
+                "Product",
+                PRODUCT_QUERY,
+                {
+                    "productId": product,
+                    "currencyCode": "USD",
+                },
+            )
 
     @task(3)
     def get_recommendations(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_get_recommendations", context=Context(), attributes={"product.id": product}):
+        user = str(uuid.uuid1())
+        with self.tracer.start_as_current_span(
+            "user_get_recommendations",
+            context=Context(),
+            attributes={"product.id": product, "user.id": user},
+        ):
             logging.info(f"User getting recommendations for product: {product}")
-            params = {
-                "productIds": [product],
-            }
-            self.client.get("/api/recommendations", params=params)
+            graphql_request(
+                self.client,
+                "Recommendations",
+                RECOMMENDATIONS_QUERY,
+                {
+                    "userId": user,
+                    "productIds": [product],
+                    "currencyCode": "USD",
+                },
+            )
 
     @task(2)
     def get_product_reviews(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_get_product_reviews", context=Context(), attributes={"product.id": product}):
+        with self.tracer.start_as_current_span(
+            "user_get_product_reviews",
+            context=Context(),
+            attributes={"product.id": product},
+        ):
             logging.info(f"User getting product reviews for product: {product}")
-            self.client.get("/api/product-reviews/" + product)
+            graphql_request(
+                self.client,
+                "ProductReviews",
+                PRODUCT_REVIEWS_QUERY,
+                {
+                    "productId": product,
+                },
+            )
 
     @task(1)
     def ask_product_ai_assistant(self):
         product = random.choice(products)
-        question = 'Can you summarize the product reviews?'
-        with self.tracer.start_as_current_span("user_ask_product_ai_assistant", context=Context(), attributes={"product.id": product, "question": question}):
+        question = "Can you summarize the product reviews?"
+        with self.tracer.start_as_current_span(
+            "user_ask_product_ai_assistant",
+            context=Context(),
+            attributes={"product.id": product, "question": question},
+        ):
             logging.info(f"Asking the AI Assistant a question for: {product} {question}")
-            question = {
-                "question": question
-            }
-            self.client.post("/api/product-ask-ai-assistant/" + product, json=question)
+            graphql_request(
+                self.client,
+                "ProductAiReviewSummary",
+                PRODUCT_AI_REVIEW_SUMMARY_QUERY,
+                {
+                    "productId": product,
+                    "question": question,
+                },
+            )
 
     @task(3)
     def get_ads(self):
         category = random.choice(categories)
-        with self.tracer.start_as_current_span("user_get_ads", context=Context(), attributes={"category": str(category)}):
+        context_keys = [] if category is None else [category]
+
+        with self.tracer.start_as_current_span(
+            "user_get_ads",
+            context=Context(),
+            attributes={"category": str(category)},
+        ):
             logging.info(f"User getting ads for category: {category}")
-            params = {
-                "contextKeys": [category],
-            }
-            self.client.get("/api/data/", params=params)
+            graphql_request(
+                self.client,
+                "Ads",
+                ADS_QUERY,
+                {
+                    "contextKeys": context_keys,
+                },
+            )
 
     @task(3)
     def view_cart(self):
-        with self.tracer.start_as_current_span("user_view_cart", context=Context()):
-            logging.info("User viewing cart")
-            self.client.get("/api/cart")
+        user = str(uuid.uuid1())
+        with self.tracer.start_as_current_span(
+            "user_view_cart",
+            context=Context(),
+            attributes={"user.id": user},
+        ):
+            logging.info(f"User viewing cart: {user}")
+            graphql_request(
+                self.client,
+                "Cart",
+                CART_QUERY,
+                {
+                    "userId": user,
+                    "currencyCode": "USD",
+                },
+            )
 
     @task(2)
     def add_to_cart(self, user=""):
         if user == "":
             user = str(uuid.uuid1())
+
         product = random.choice(products)
         quantity = random.choice([1, 2, 3, 4, 5, 10])
-        with self.tracer.start_as_current_span("user_add_to_cart", context=Context(), attributes={"user.id": user, "product.id": product, "quantity": quantity}):
+
+        with self.tracer.start_as_current_span(
+            "user_add_to_cart",
+            context=Context(),
+            attributes={
+                "user.id": user,
+                "product.id": product,
+                "quantity": quantity,
+            },
+        ):
             logging.info(f"User {user} adding {quantity} of product {product} to cart")
-            self.client.get("/api/products/" + product)
-            cart_item = {
-                "item": {
+
+            graphql_request(
+                self.client,
+                "Product",
+                PRODUCT_QUERY,
+                {
                     "productId": product,
-                    "quantity": quantity,
+                    "currencyCode": "USD",
                 },
-                "userId": user,
-            }
-            self.client.post("/api/cart", json=cart_item)
+            )
+
+            graphql_request(
+                self.client,
+                "AddItem",
+                ADD_ITEM_MUTATION,
+                {
+                    "userId": user,
+                    "item": {
+                        "productId": product,
+                        "quantity": quantity,
+                    },
+                },
+            )
 
     @task(1)
     def checkout(self):
         user = str(uuid.uuid1())
-        with self.tracer.start_as_current_span("user_checkout_single", context=Context(), attributes={"user.id": user}):
+        with self.tracer.start_as_current_span(
+            "user_checkout_single",
+            context=Context(),
+            attributes={"user.id": user},
+        ):
             self.add_to_cart(user=user)
-            checkout_person = random.choice(people)
+
+            checkout_person = dict(random.choice(people))
             checkout_person["userId"] = user
-            self.client.post("/api/checkout", json=checkout_person)
+            currency_code = checkout_person.get("userCurrency", "USD")
+
+            graphql_request(
+                self.client,
+                "PlaceOrder",
+                PLACE_ORDER_MUTATION,
+                {
+                    "input": checkout_person,
+                    "currencyCode": currency_code,
+                },
+            )
+
             logging.info(f"Checkout completed for user {user}")
 
     @task(1)
     def checkout_multi(self):
         user = str(uuid.uuid1())
         item_count = random.choice([2, 3, 4])
-        with self.tracer.start_as_current_span("user_checkout_multi", context=Context(),
-                                            attributes={"user.id": user, "item.count": item_count}):
-            for i in range(item_count):
+
+        with self.tracer.start_as_current_span(
+            "user_checkout_multi",
+            context=Context(),
+            attributes={"user.id": user, "item.count": item_count},
+        ):
+            for _ in range(item_count):
                 self.add_to_cart(user=user)
-            checkout_person = random.choice(people)
+
+            checkout_person = dict(random.choice(people))
             checkout_person["userId"] = user
-            self.client.post("/api/checkout", json=checkout_person)
+            currency_code = checkout_person.get("userCurrency", "USD")
+
+            graphql_request(
+                self.client,
+                "PlaceOrder",
+                PLACE_ORDER_MUTATION,
+                {
+                    "input": checkout_person,
+                    "currencyCode": currency_code,
+                },
+            )
+
             logging.info(f"Multi-item checkout completed for user {user}")
 
     @task(5)
     def flood_home(self):
         flood_count = get_flagd_value("loadGeneratorFloodHomepage")
         if flood_count > 0:
-            with self.tracer.start_as_current_span("user_flood_home",  context=Context(), attributes={"flood.count": flood_count}):
+            with self.tracer.start_as_current_span(
+                "user_flood_home",
+                context=Context(),
+                attributes={"flood.count": flood_count},
+            ):
                 logging.info(f"User flooding homepage {flood_count} times")
                 for _ in range(0, flood_count):
                     self.client.get("/")
@@ -247,9 +545,9 @@ if browser_traffic_enabled:
             with tracer.start_as_current_span("browser_change_currency", context=Context()):
                 try:
                     page.on("console", lambda msg: print(msg.text))
-                    await page.route('**/*', add_baggage_header)
+                    await page.route("**/*", add_baggage_header)
                     await page.goto("/cart", wait_until="domcontentloaded")
-                    await page.select_option('[name="currency_code"]', 'CHF')
+                    await page.select_option('[name="currency_code"]', "CHF")
                     await page.wait_for_timeout(2000)  # giving the browser time to export the traces
                     logging.info("Currency changed to CHF")
                 except Exception as e:
@@ -262,13 +560,13 @@ if browser_traffic_enabled:
             with tracer.start_as_current_span("browser_add_to_cart", context=Context()):
                 try:
                     page.on("console", lambda msg: print(msg.text))
-                    await page.route('**/*', add_baggage_header)
+                    await page.route("**/*", add_baggage_header)
                     await page.goto("/", wait_until="domcontentloaded")
                     # Wait for Roof Binoculars image to load (awaiting successful XHR response in less than 15 seconds)
                     await page.wait_for_event(
                         "response",
-                        predicate=lambda r: '/images/products/RoofBinoculars.jpg' in r.url and r.status == 200,
-                        timeout=15000
+                        predicate=lambda r: "/images/products/RoofBinoculars.jpg" in r.url and r.status == 200,
+                        timeout=15000,
                     )
                     await page.click('p:has-text("Roof Binoculars")')
                     await page.wait_for_load_state("domcontentloaded")
@@ -279,10 +577,11 @@ if browser_traffic_enabled:
                 except Exception as e:
                     logging.error(f"Error in add to cart task: {str(e)}")
 
+
 async def add_baggage_header(route: Route, request: Request):
-    existing_baggage = request.headers.get('baggage', '')
+    existing_baggage = request.headers.get("baggage", "")
     headers = {
         **request.headers,
-        'baggage': ', '.join(filter(None, (existing_baggage, 'synthetic_request=true')))
+        "baggage": ", ".join(filter(None, (existing_baggage, "synthetic_request=true"))),
     }
     await route.continue_(headers=headers)
