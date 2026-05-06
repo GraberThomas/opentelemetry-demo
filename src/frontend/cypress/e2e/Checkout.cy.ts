@@ -4,14 +4,32 @@
 import { getElementByField } from '../../utils/Cypress';
 import { CypressFields } from '../../utils/enums/CypressFields';
 
-describe('Checkout Flow', () => {
-  before(() => {
-    cy.intercept('POST', '/api/cart*').as('addToCart');
-    cy.intercept('GET', '/api/cart*').as('getCart');
-    cy.intercept('POST', '/api/checkout*').as('placeOrder');
-  });
+const aliasGraphQLOperations = () => {
+  cy.intercept('POST', '/api/graphql', req => {
+    const { operationName } = req.body;
 
+    switch (operationName) {
+      case 'AddItem':
+        req.alias = 'addToCart';
+        break;
+
+      case 'Cart':
+        req.alias = 'getCart';
+        break;
+
+      case 'PlaceOrder':
+        req.alias = 'placeOrder';
+        break;
+
+      default:
+        break;
+    }
+  });
+};
+
+describe('Checkout Flow', () => {
   beforeEach(() => {
+    aliasGraphQLOperations();
     cy.visit('/');
   });
 

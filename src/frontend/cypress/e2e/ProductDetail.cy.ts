@@ -4,16 +4,48 @@
 import { getElementByField } from '../../utils/Cypress';
 import { CypressFields } from '../../utils/enums/CypressFields';
 
+const aliasGraphQLOperations = () => {
+  cy.intercept('POST', '/api/graphql', req => {
+    const { operationName } = req.body;
+
+    switch (operationName) {
+      case 'Product':
+        req.alias = 'getProduct';
+        break;
+
+      case 'Ads':
+        req.alias = 'getAd';
+        break;
+
+      case 'Recommendations':
+        req.alias = 'getRecommendations';
+        break;
+
+      case 'ProductReviews':
+        req.alias = 'getProductReviews';
+        break;
+
+      case 'AddItem':
+        req.alias = 'addToCart';
+        break;
+
+      case 'Cart':
+        req.alias = 'getCart';
+        break;
+
+      default:
+        break;
+    }
+  });
+};
+
 describe('Product Detail Page', () => {
   beforeEach(() => {
     cy.visit('/');
   });
 
   it('should validate the product detail page', () => {
-    cy.intercept('GET', '/api/products/*').as('getProduct');
-    cy.intercept('GET', '/api/data*').as('getAd');
-    cy.intercept('GET', '/api/recommendations*').as('getRecommendations');
-    cy.intercept('GET', '/api/product-reviews/*').as('getProductReviews');
+    aliasGraphQLOperations();
 
     getElementByField(CypressFields.ProductCard).first().click();
 
@@ -37,11 +69,17 @@ describe('Product Detail Page', () => {
   });
 
   it('should not render product picture or request undefined image when picture is missing', () => {
-    cy.intercept('GET', '/api/products/*', req => {
-      req.continue(res => {
-        delete res.body.picture;
-      });
-    }).as('getProduct');
+    cy.intercept('POST', '/api/graphql', req => {
+      if (req.body.operationName === 'Product') {
+        req.alias = 'getProduct';
+
+        req.continue(res => {
+          if (res.body?.data?.product) {
+            delete res.body.data.product.picture;
+          }
+        });
+      }
+    });
 
     cy.intercept('GET', '/images/products/undefined').as('undefinedImage');
 
@@ -58,8 +96,8 @@ describe('Product Detail Page', () => {
   });
 
   it('should add item to cart', () => {
-    cy.intercept('POST', '/api/cart*').as('addToCart');
-    cy.intercept('GET', '/api/cart*').as('getCart');
+    aliasGraphQLOperations();
+
     getElementByField(CypressFields.ProductCard).first().click();
     getElementByField(CypressFields.ProductAddToCart).click();
 
